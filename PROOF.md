@@ -4,7 +4,7 @@
 |-----|--------------------------------------------------|--------|
 | 1   | git --version screenshot                         | Added  |
 | 2   | git config screenshot                            | Added  |
-| 3   | Repository folder structure screenshot           | Added  |
+| 3   | Repository folder structure screenshot           | not added  |
 | 4   | Public GitHub repository page link/screenshot    | Added  |
 | 5   | Commit history showing 5+ commits                | Added  |
 | 6   | Website files verified inside the docs folder    | Added  |

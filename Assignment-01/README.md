@@ -5,6 +5,7 @@ To create a static web page that demonstrates all HTML text formatting tags in a
 
 ## Technologies Used
 - HTML
+-css
 
 ## Steps Performed
 1. Created the HTML structure.
