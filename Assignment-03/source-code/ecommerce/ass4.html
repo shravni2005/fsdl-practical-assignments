@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CSV -> Chart</title>
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:20px}
+    .row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+    input[type="number"]{width:120px}
+    table{border-collapse:collapse;margin-top:12px;width:100%}
+    th,td{border:1px solid #ddd;padding:6px;text-align:left}
+    canvas{max-width:100%;height:360px}
+  </style>
+</head>
+<body>
+  <h2>Enter data and choose chart type (Line or Bar)</h2>
+
+  <div class="row">
+    <label>Label: <input id="labelInput" type="text" placeholder="e.g. Jan" /></label>
+    <label>Value: <input id="valueInput" type="number" placeholder="e.g. 42" /></label>
+    <button id="addBtn">Add Row</button>
+    <select id="chartType">
+      <option value="bar">Bar</option>
+      <option value="line">Line</option>
+    </select>
+    <button id="renderBtn">Render Chart</button>
+  </div>
+
+  <div class="row">
+    <input id="csvFile" type="file" accept=".csv" />
+    <button id="importBtn">Import CSV</button>
+    <button id="downloadBtn">Download CSV</button>
+    <button id="clearBtn">Clear</button>
+  </div>
+
+  <table id="dataTable">
+    <thead><tr><th>#</th><th>Label</th><th>Value</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <canvas id="chart"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const labelInput = document.getElementById('labelInput');
+    const valueInput = document.getElementById('valueInput');
+    const addBtn = document.getElementById('addBtn');
+    const renderBtn = document.getElementById('renderBtn');
+    const importBtn = document.getElementById('importBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const csvFile = document.getElementById('csvFile');
+    const tableBody = document.querySelector('#dataTable tbody');
+    const chartTypeSelect = document.getElementById('chartType');
+
+    let data = [];
+    let chart = null;
+
+    function refreshTable(){
+      tableBody.innerHTML = '';
+      data.forEach((r,i)=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${i+1}</td><td>${escapeHtml(r.label)}</td><td>${r.value}</td>`;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    function escapeHtml(s){ return (s+'').replace(/[&<>"']/g, c=>({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
+
+    function addRow(){
+      const label = labelInput.value.trim();
+      const value = Number(valueInput.value);
+      if(!label || isNaN(value)) return alert('Enter a valid label and numeric value');
+      data.push({label,value});
+      labelInput.value=''; valueInput.value='';
+      refreshTable();
+    }
+
+    function renderChart(){
+      const ctx = document.getElementById('chart').getContext('2d');
+      const labels = data.map(d=>d.label);
+      const values = data.map(d=>d.value);
+      const type = chartTypeSelect.value || 'bar';
+      if(chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: type,
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Values',
+            data: values,
+            backgroundColor: 'rgba(54,162,235,0.4)',
+            borderColor: 'rgba(54,162,235,1)',
+            fill: type === 'line'
+          }]
+        },
+        options: {responsive:true,maintainAspectRatio:false}
+      });
+    }
+
+    function downloadCSV(){
+      if(data.length===0) return alert('No data to download');
+      const rows = ['label,value', ...data.map(d=>`${escapeCsv(d.label)},${d.value}`)];
+      const csv = rows.join('\n');
+      const blob = new Blob([csv],{type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'data.csv';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function escapeCsv(s){
+      if(/[,"\n]/.test(s)) return '"'+String(s).replace(/"/g,'""')+'"';
+      return s;
+    }
+
+    function importCSVFile(file){
+      const reader = new FileReader();
+      reader.onload = e => {
+        const text = e.target.result.replace(/\r/g,'');
+        const lines = text.split('\n').filter(l=>l.trim());
+        const parsed = [];
+        lines.forEach((line, idx)=>{
+          if(idx===0 && line.toLowerCase().includes('label') && line.toLowerCase().includes('value')) return;
+          const parts = splitCsvLine(line);
+          if(parts.length>=2){
+            const label = parts[0];
+            const value = Number(parts[1]);
+            if(!isNaN(value)) parsed.push({label, value});
+          }
+        });
+        if(parsed.length) { data = parsed; refreshTable(); }
+        else alert('No valid rows found in CSV');
+      };
+      reader.readAsText(file);
+    }
+
+    function splitCsvLine(line){
+      const out = [];
+      let cur = '', inQuotes=false;
+      for(let i=0;i<line.length;i++){
+        const ch = line[i];
+        if(ch==='"'){ if(inQuotes && line[i+1]==='"'){ cur+='"'; i++; } else inQuotes=!inQuotes; }
+        else if(ch===',' && !inQuotes){ out.push(cur); cur=''; }
+        else cur+=ch;
+      }
+      out.push(cur);
+      return out.map(s=>s.trim());
+    }
+
+    addBtn.addEventListener('click', addRow);
+    renderBtn.addEventListener('click', ()=>{ if(data.length===0) return alert('No data to render'); renderChart(); });
+    downloadBtn.addEventListener('click', downloadCSV);
+    clearBtn.addEventListener('click', ()=>{ data=[]; refreshTable(); if(chart) chart.destroy(); chart=null; });
+    importBtn.addEventListener('click', ()=>{
+      const f = csvFile.files[0]; if(!f) return alert('Choose a CSV file first'); importCSVFile(f);
+    });
+
+    valueInput.addEventListener('keydown', e=>{ if(e.key==='Enter') addRow(); });
+
+  </script>
+</body>
+</html>

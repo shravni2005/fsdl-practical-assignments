@@ -1,0 +1,7 @@
+{
+  "name": "Wanderlust Adventures",
+  "description": "A professional and simple travel agency website featuring high-quality visuals, package listings, and a booking system.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

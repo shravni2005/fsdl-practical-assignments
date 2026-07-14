@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shravni's Portfolio - Education</title>
+    <style>
+        /* --- 1. BASIC STYLE --- */
+        body {
+            background-color: #030712; 
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            text-align: center;
+        }
+
+        /* --- 2. THE MENU --- */
+        .navbar {
+            background-color: #111827;
+            padding: 20px;
+            border-bottom: 1px solid #374151;
+            position: fixed;
+            top: 0;
+            width: 100%;
+        }
+
+        .navbar a {
+            color: #94a3b8;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .navbar a.active {
+            color: #6366f1;
+        }
+
+        .navbar a:hover {
+            color: #6366f1;
+        }
+
+        /* --- 3. PAGE CONTENT --- */
+        .content {
+            padding-top: 150px;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-size: 40px;
+            color: #6366f1;
+            margin-bottom: 20px;
+        }
+
+        .description {
+            color: #94a3b8;
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+
+        /* Education Boxes */
+        .box {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            padding: 30px;
+            margin: 15px;
+            border-radius: 15px;
+            display: inline-block;
+            width: 350px;
+            text-align: left;
+            vertical-align: top;
+            transition: 0.3s;
+        }
+
+        .box:hover {
+            border-color: #6366f1;
+            transform: translateY(-5px);
+        }
+
+        .date {
+            color: #818cf8;
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .box h3 {
+            color: #a855f7;
+            margin: 0 0 10px 0;
+        }
+
+        .university {
+            color: #94a3b8;
+            font-size: 14px;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION MENU -->
+    <div class="navbar">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="education.html" class="active">Education</a>
+        <a href="projects.html">Projects</a>
+        <a href="contact.html">Contact</a>
+    </div>
+
+    <!-- MAIN EDUCATION CONTENT -->
+    <div class="content">
+        <h1>My Education</h1>
+        <p class="description">My academic qualifications and the institutions I've attended.</p>
+        
+        <!-- Degree Box -->
+        <div class="box">
+            <div class="date">2023 - Present</div>
+            <h3>Pimpri Chinchwad College of Engineering, Pune</h3>
+            <p><b>Bachelor of Engineering (3rd Year)</b></p>
+            <div class="university">Affiliated with Savitribai Phule Pune University</div>
+            <p>Focusing on Computer Engineering, Data Science, and AI.</p>
+        </div>
+
+        <!-- Junior College Box -->
+        <div class="box">
+            <div class="date">Completed</div>
+            <h3>P. R. Pote Patil Junior College, Amravati</h3>
+            <p><b>HSC - Science and Mathematics</b></p>
+            <div class="university">Affiliated with Sant Gadge Baba Amravati University</div>
+            <p>Solid foundation in Physics, Chemistry, and Mathematics.</p>
+        </div>
+    </div>
+
+</body>
+</html>
