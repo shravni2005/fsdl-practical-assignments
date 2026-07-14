@@ -5,7 +5,6 @@ To design a responsive Personal Portfolio webpage using HTML and CSS. Bootstrap 
 
 ## Technologies Used
 - HTML
-- CSS
 - Bootstrap
 
 ## Steps Performed
